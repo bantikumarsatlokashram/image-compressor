@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiPress | Free Online Image Compressor by Banti Kumar</title>
+    <meta name="description" content="Free, secure, client-side image compression tool. Compress JPG, PNG, WEBP images instantly without server uploads. Built by Banti Kumar at bkpkvideo.com.">
+    <meta name="keywords" content="image compressor, reduce image size, compress jpeg, optimize png, webp converter, free image tool, client-side compression, privacy friendly, Banti Kumar">
+    <meta name="author" content="Banti Kumar">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bkpkvideo.com/">
+    <meta property="og:title" content="OptiPress | Free Image Compressor by Banti Kumar">
+    <meta property="og:description" content="Compress images locally in your browser. No upload required. Fast, secure, and free.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://bkpkvideo.com/">
+    <meta property="twitter:title" content="OptiPress | Free Image Compressor">
+    <meta property="twitter:description" content="Compress images locally in your browser. Built by Banti Kumar.">
+
+    <!-- JSON-LD Schema for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "OptiPress Image Compressor",
+      "operatingSystem": "Web",
+      "applicationCategory": "MultimediaApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Banti Kumar",
+        "url": "https://bkpkvideo.com"
+      }
+    }
+    </script>
+    
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            
+            /* Light Theme Defaults */
+            --bg-body: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-surface-2: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-surface: #1e293b;
+            --bg-surface-2: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+        }
+
+        /* --- GLOBAL RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button, input, select { font-family: inherit; }
+
+        /* --- UTILITIES --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; width: 100%; }
+        /* Make main consume available space to push footer down */
+        main.container { flex: 1; }
+        
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .hidden { display: none !important; }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- HEADER --- */
+        header {
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; }
+        .logo svg { width: 28px; height: 28px; }
+        
+        .nav-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-btn:hover { background: var(--bg-surface-2); border-color: var(--primary); }
+
+        /* --- LANGUAGE DROPDOWN (CUSTOM) --- */
+        .lang-wrapper {
+            position: relative;
+        }
+        .lang-btn-custom {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-main);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .lang-btn-custom:hover { background: var(--bg-surface-2); border-color: var(--primary); }
+        .flag-svg { width: 20px; height: 15px; border-radius: 2px; object-fit: cover; display: block; border: 1px solid rgba(0,0,0,0.1); }
+        
+        .lang-menu {
+            position: absolute;
+            top: 110%;
+            right: 0;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            min-width: 140px;
+            overflow: hidden;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-5px);
+            transition: all 0.2s ease;
+        }
+        .lang-menu.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        
+        .lang-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: var(--text-main);
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.9rem;
+            transition: background 0.1s;
+        }
+        .lang-option:hover { background: var(--bg-surface-2); }
+        .lang-option.active { color: var(--primary); font-weight: 600; background: rgba(99, 102, 241, 0.05); }
+
+
+        /* --- HERO & DROP ZONE --- */
+        .hero { padding: 3rem 0; text-align: center; }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { color: var(--text-muted); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+        .drop-zone {
+            background: var(--bg-surface);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 3rem 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+            transform: scale(1.01);
+        }
+        .drop-zone-content { pointer-events: none; }
+        .drop-icon { width: 64px; height: 64px; color: var(--primary); margin-bottom: 1rem; }
+        .btn-upload {
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+            margin-top: 1rem;
+            pointer-events: auto; /* Re-enable click */
+        }
+        .btn-upload:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+        /* --- GLOBAL CONTROLS --- */
+        .controls-panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            align-items: start;
+        }
+        
+        .control-group label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-muted); }
+        .control-group input[type="range"] { width: 100%; accent-color: var(--primary); height: 6px; }
+        .control-group select, .control-group input[type="number"] {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-body);
+            color: var(--text-main);
+        }
+        .checkbox-wrapper { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.85rem; }
+        
+        /* --- IMAGE GRID --- */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding-bottom: 80px; /* Space for fixed footer */
+        }
+
+        .img-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.4s ease-out;
+            position: relative;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .img-preview-area {
+            height: 200px;
+            background: var(--bg-surface-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .img-preview-area img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .img-badge-format {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-details { padding: 1rem; flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
+        .filename { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9rem; }
+        
+        .stats-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); }
+        .stats-val { font-weight: 600; color: var(--text-main); }
+        .compression-bar {
+            height: 6px;
+            background: var(--bg-surface-2);
+            border-radius: 99px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        .compression-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.5s ease; }
+        
+        .card-actions {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+        }
+        .btn-card {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-surface-2);
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: var(--text-main);
+        }
+        .btn-download { background: var(--primary); color: white; border: none; }
+        .btn-download:hover { background: var(--primary-hover); }
+
+        /* --- FIXED FOOTER --- */
+        .bottom-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            padding: 12px 24px;
+            border-radius: 99px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s;
+        }
+        .bottom-bar.visible { opacity: 1; pointer-events: auto; bottom: 30px; }
+        
+        .total-stats { display: flex; gap: 1rem; font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
+        .btn-download-all {
+            background: var(--primary);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 99px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- SITE FOOTER (NEW) --- */
+        .site-footer {
+            text-align: center;
+            padding: 2rem 0 3rem; 
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            background: var(--bg-surface);
+        }
+        .site-footer a {
+            color: var(--primary);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .site-footer a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        /* --- LOADING & EMPTY STATES --- */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8rem; }
+            .controls-panel { grid-template-columns: 1fr; }
+            .bottom-bar { width: 90%; flex-direction: column; border-radius: var(--radius); gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+    <div class="container flex items-center justify-between">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            OptiPress
+        </div>
+        <div class="flex items-center gap-2">
+            
+            <!-- Custom Language Dropdown (SVG Flags for Windows Support) -->
+            <div class="lang-wrapper">
+                <button id="lang-btn" class="lang-btn-custom">
+                    <!-- Default US Flag SVG -->
+                    <svg class="flag-svg" viewBox="0 0 640 480">
+                        <path fill="#bd3d44" d="M0 0h640v480H0"/>
+                        <path stroke="#fff" stroke-width="37" d="M0 55.3h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/>
+                        <path fill="#192f5d" d="M0 0h296v258.5H0"/>
+                        <path fill="#fff" d="M16 16h264v226H16z" opacity="0"/>
+                        <!-- Simplified Stars (dots) for lightweight SVG -->
+                        <g fill="#fff">
+                            <circle cx="30" cy="24" r="9"/><circle cx="88" cy="24" r="9"/><circle cx="147" cy="24" r="9"/><circle cx="206" cy="24" r="9"/><circle cx="265" cy="24" r="9"/>
+                            <circle cx="59" cy="50" r="9"/><circle cx="118" cy="50" r="9"/><circle cx="177" cy="50" r="9"/><circle cx="236" cy="50" r="9"/>
+                            <circle cx="30" cy="76" r="9"/><circle cx="88" cy="76" r="9"/><circle cx="147" cy="76" r="9"/><circle cx="206" cy="76" r="9"/><circle cx="265" cy="76" r="9"/>
+                        </g>
+                    </svg>
+                    <span>EN</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div id="lang-menu" class="lang-menu">
+                    <!-- EN -->
+                    <button class="lang-option active" onclick="setLanguage('en')">
+                        <svg class="flag-svg" viewBox="0 0 640 480">
+                            <path fill="#bd3d44" d="M0 0h640v480H0"/>
+                            <path stroke="#fff" stroke-width="37" d="M0 55.3h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/>
+                            <path fill="#192f5d" d="M0 0h296v258.5H0"/>
+                            <g fill="#fff"><circle cx="30" cy="24" r="9"/><circle cx="88" cy="24" r="9"/><circle cx="147" cy="24" r="9"/><circle cx="206" cy="24" r="9"/><circle cx="265" cy="24" r="9"/><circle cx="59" cy="50" r="9"/><circle cx="118" cy="50" r="9"/><circle cx="177" cy="50" r="9"/><circle cx="236" cy="50" r="9"/></g>
+                        </svg>
+                        English
+                    </button>
+                    <!-- ES -->
+                    <button class="lang-option" onclick="setLanguage('es')">
+                        <svg class="flag-svg" viewBox="0 0 640 480">
+                            <path fill="#AA151B" d="M0 0h640v480H0"/>
+                            <path fill="#F1BF00" d="M0 120h640v240H0"/>
+                        </svg>
+                        Español
+                    </button>
+                    <!-- FR -->
+                    <button class="lang-option" onclick="setLanguage('fr')">
+                        <svg class="flag-svg" viewBox="0 0 640 480">
+                            <path fill="#fff" d="M0 0h640v480H0"/>
+                            <path fill="#002395" d="M0 0h213.3v480H0"/>
+                            <path fill="#ED2939" d="M426.7 0h213.3v480H426.7"/>
+                        </svg>
+                        Français
+                    </button>
+                    <!-- HI -->
+                    <button class="lang-option" onclick="setLanguage('hi')">
+                        <svg class="flag-svg" viewBox="0 0 640 480">
+                            <path fill="#FF9933" d="M0 0h640v160H0"/>
+                            <path fill="#FFFFFF" d="M0 160h640v160H0"/>
+                            <path fill="#138808" d="M0 320h640v160H0"/>
+                            <circle cx="320" cy="240" r="70" fill="none" stroke="#000080" stroke-width="10"/>
+                            <g stroke="#000080" stroke-width="4" transform="translate(320,240)">
+                                <line x1="0" y1="-70" x2="0" y2="70"/>
+                                <line x1="-70" y1="0" x2="70" y2="0"/>
+                                <line x1="-49.5" y1="-49.5" x2="49.5" y2="49.5"/>
+                                <line x1="49.5" y1="-49.5" x2="-49.5" y2="49.5"/>
+                            </g>
+                        </svg>
+                        हिन्दी
+                    </button>
+                </div>
+            </div>
+
+            <button id="theme-toggle" class="nav-btn">
+                <!-- Moon Icon -->
+                <svg id="icon-moon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <!-- Sun Icon -->
+                <svg id="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="container">
+    
+    <!-- Hero / Drop Zone -->
+    <section class="hero">
+        <h1 data-i18n="heroTitle">Advanced Local Image Compressor</h1>
+        <p data-i18n="heroSubtitle">Compress JPG, PNG, WEBP securely in your browser. No server uploads, no limits.</p>
+        
+        <div id="drop-zone" class="drop-zone">
+            <div class="drop-zone-content">
+                <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <h3 style="margin-bottom: 0.5rem;" data-i18n="dropText">Drag & Drop images here</h3>
+                <span style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="orText">or</span>
+            </div>
+            <button class="btn-upload" onclick="document.getElementById('file-input').click()">
+                <span data-i18n="browseBtn">Browse Files</span>
+            </button>
+            <input type="file" id="file-input" multiple accept="image/png, image/jpeg, image/webp, image/bmp" hidden>
+        </div>
+    </section>
+
+    <!-- Global Controls -->
+    <section id="controls-section" class="controls-panel hidden">
+        
+        <!-- Quality -->
+        <div class="control-group">
+            <div class="flex justify-between">
+                <label data-i18n="qualityLabel">Quality</label>
+                <span id="quality-val" style="font-size: 0.8rem; font-weight: bold; color: var(--primary);">80%</span>
+            </div>
+            <input type="range" id="global-quality" min="1" max="100" value="80">
+            <div class="checkbox-wrapper">
+                <span style="font-size: 0.75rem; color: var(--text-muted);" data-i18n="qualityHint">Lower quality = smaller size</span>
+            </div>
+        </div>
+
+        <!-- Format -->
+        <div class="control-group">
+            <label data-i18n="formatLabel">Output Format</label>
+            <select id="global-format">
+                <option value="original" data-i18n="fmtOriginal">Keep Original</option>
+                <option value="image/jpeg">JPEG</option>
+                <option value="image/png">PNG</option>
+                <option value="image/webp">WEBP (Best)</option>
+            </select>
+        </div>
+
+        <!-- Resize -->
+        <div class="control-group">
+            <label data-i18n="resizeLabel">Max Width (px)</label>
+            <input type="number" id="global-width" placeholder="Auto" min="100">
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="maintain-ratio" checked>
+                <label for="maintain-ratio" style="margin:0; display:inline;" data-i18n="aspectRatio">Maintain Aspect Ratio</label>
+            </div>
+        </div>
+
+        <div class="control-group" style="display: flex; align-items: flex-end;">
+            <button id="apply-btn" class="btn-card" style="width: 100%; background: var(--bg-surface-2); border-color: var(--primary); color: var(--primary); font-weight: 600;">
+                <span data-i18n="applyBtn">Apply to All</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Image Grid -->
+    <div id="image-grid" class="image-grid">
+        <!-- Cards injected by JS -->
+    </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <div class="container">
+        <p>Built with ❤️ by <a href="https://bkpkvideo.com" target="_blank" rel="noopener noreferrer">Banti Kumar</a></p>
+        <p style="margin-top: 0.5rem; font-size: 0.8rem; opacity: 0.8;">
+            <a href="https://bkpkvideo.com" target="_blank">bkpkvideo.com</a> | Secure Client-Side Compression
+        </p>
+    </div>
+</footer>
+
+<!-- Bottom Sticky Bar -->
+<div id="bottom-bar" class="bottom-bar">
+    <div class="total-stats">
+        <span><span data-i18n="totalReduced">Reduced:</span> <span id="total-savings" style="color: var(--success);">0 MB</span></span>
+        <span style="opacity: 0.5;">|</span>
+        <span><span data-i18n="count">Count:</span> <span id="file-count">0</span></span>
+    </div>
+    <div class="flex gap-2">
+        <button id="reset-all" class="nav-btn" style="border-radius: 99px; padding: 8px 16px; border-color: var(--danger); color: var(--danger);">
+            <span data-i18n="clearBtn">Clear All</span>
+        </button>
+        <button id="download-all" class="btn-download-all">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span data-i18n="downloadAllBtn">Download All</span>
+        </button>
+    </div>
+</div>
+
+<script>
+/**
+ * OptiPress - Vanilla JS Image Compressor
+ * Designed for High Performance & Privacy
+ * Built by Banti Kumar
+ */
+
+// --- State & Config ---
+const state = {
+    files: [], // Array of objects: { id, file, compressedBlob, options, status }
+    globalOptions: {
+        quality: 0.8,
+        format: 'original',
+        maxWidth: 0, // 0 means auto/original
+        maintainRatio: true
+    },
+    lang: 'en'
+};
+
+const translations = {
+    en: {
+        heroTitle: "Advanced Local Image Compressor",
+        heroSubtitle: "Compress JPG, PNG, WEBP securely in your browser. No server uploads.",
+        dropText: "Drag & Drop images here",
+        orText: "or",
+        browseBtn: "Browse Files",
+        qualityLabel: "Quality",
+        qualityHint: "Lower = smaller size",
+        formatLabel: "Output Format",
+        fmtOriginal: "Keep Original",
+        resizeLabel: "Max Width (px)",
+        aspectRatio: "Maintain Aspect Ratio",
+        applyBtn: "Re-Compress All",
+        totalReduced: "Reduced:",
+        count: "Count:",
+        clearBtn: "Clear All",
+        downloadAllBtn: "Download All",
+        original: "Original",
+        compressed: "Compressed",
+        saved: "Saved"
+    },
+    es: {
+        heroTitle: "Compresor de Imágenes Local",
+        heroSubtitle: "Comprime JPG, PNG, WEBP de forma segura en tu navegador.",
+        dropText: "Arrastra imágenes aquí",
+        orText: "o",
+        browseBtn: "Explorar Archivos",
+        qualityLabel: "Calidad",
+        qualityHint: "Menor = menos tamaño",
+        formatLabel: "Formato de Salida",
+        fmtOriginal: "Mantener Original",
+        resizeLabel: "Ancho Máx (px)",
+        aspectRatio: "Mantener Proporción",
+        applyBtn: "Recomprimir Todo",
+        totalReduced: "Reducido:",
+        count: "Total:",
+        clearBtn: "Borrar Todo",
+        downloadAllBtn: "Descargar Todo",
+        original: "Original",
+        compressed: "Comprimido",
+        saved: "Ahorro"
+    },
+    fr: {
+        heroTitle: "Compresseur d'Image Avancé",
+        heroSubtitle: "Compressez JPG, PNG, WEBP en toute sécurité dans votre navigateur.",
+        dropText: "Glissez-déposez ici",
+        orText: "ou",
+        browseBtn: "Parcourir",
+        qualityLabel: "Qualité",
+        qualityHint: "Faible = petite taille",
+        formatLabel: "Format de Sortie",
+        fmtOriginal: "Garder l'Original",
+        resizeLabel: "Largeur Max (px)",
+        aspectRatio: "Garder Ratio",
+        applyBtn: "Recompresser Tout",
+        totalReduced: "Réduit:",
+        count: "Nombre:",
+        clearBtn: "Tout Effacer",
+        downloadAllBtn: "Tout Télécharger",
+        original: "Original",
+        compressed: "Compressé",
+        saved: "Économisé"
+    },
+    hi: {
+        heroTitle: "एडवांस्ड इमेज कंप्रेसर",
+        heroSubtitle: "अपने ब्राउज़र में सुरक्षित रूप से JPG, PNG, WEBP को कंप्रेस करें। कोई सर्वर अपलोड नहीं।",
+        dropText: "इमेज यहाँ ड्रैग और ड्रॉप करें",
+        orText: "या",
+        browseBtn: "फ़ाइलें चुनें",
+        qualityLabel: "गुणवत्ता",
+        qualityHint: "कम = छोटा आकार",
+        formatLabel: "आउटपुट फॉर्मेट",
+        fmtOriginal: "मूल रखें",
+        resizeLabel: "अधिकतम चौड़ाई (px)",
+        aspectRatio: "आस्पेक्ट रेश्यो बनाए रखें",
+        applyBtn: "सभी पर लागू करें",
+        totalReduced: "घटाया गया:",
+        count: "कुल:",
+        clearBtn: "सभी हटाएं",
+        downloadAllBtn: "सभी डाउनलोड करें",
+        original: "मूल",
+        compressed: "कंप्रेस्ड",
+        saved: "बचत"
+    }
+};
+
+// --- DOM Elements ---
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const imageGrid = document.getElementById('image-grid');
+const controlsSection = document.getElementById('controls-section');
+const bottomBar = document.getElementById('bottom-bar');
+const qualityInput = document.getElementById('global-quality');
+const qualityVal = document.getElementById('quality-val');
+const formatSelect = document.getElementById('global-format');
+const widthInput = document.getElementById('global-width');
+const ratioCheck = document.getElementById('maintain-ratio');
+const applyBtn = document.getElementById('apply-btn');
+const themeToggle = document.getElementById('theme-toggle');
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    setupEventListeners();
+});
+
+// --- Theme Logic ---
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+}
+
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    updateThemeIcon(next);
+}
+
+function updateThemeIcon(theme) {
+    const sun = document.getElementById('icon-sun');
+    const moon = document.getElementById('icon-moon');
+    if (theme === 'dark') {
+        sun.classList.add('hidden');
+        moon.classList.remove('hidden');
+    } else {
+        moon.classList.add('hidden');
+        sun.classList.remove('hidden');
+    }
+}
+
+// --- Language Dropdown Logic ---
+const langBtn = document.getElementById('lang-btn');
+const langMenu = document.getElementById('lang-menu');
+
+function toggleLangMenu(e) {
+    if(e) e.stopPropagation();
+    langMenu.classList.toggle('show');
+}
+
+function setLanguage(lang) {
+    state.lang = lang;
+    updateTexts();
+    
+    // Update Button Content
+    const opts = langMenu.querySelectorAll('.lang-option');
+    opts.forEach(o => o.classList.remove('active'));
+    
+    // Simple lookup to clone SVG
+    const selectedBtn = Array.from(opts).find(btn => btn.getAttribute('onclick').includes(`'${lang}'`));
+    if (selectedBtn) {
+        selectedBtn.classList.add('active');
+        const svg = selectedBtn.querySelector('svg').cloneNode(true);
+        const text = lang === 'en' ? 'EN' : lang === 'es' ? 'ES' : lang === 'fr' ? 'FR' : 'HI';
+        
+        langBtn.innerHTML = '';
+        langBtn.appendChild(svg);
+        const span = document.createElement('span');
+        span.textContent = text;
+        langBtn.appendChild(span);
+        // Chevron
+        langBtn.innerHTML += `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
+    }
+    
+    langMenu.classList.remove('show');
+}
+
+document.addEventListener('click', (e) => {
+    if (!langBtn.contains(e.target) && !langMenu.contains(e.target)) {
+        langMenu.classList.remove('show');
+    }
+});
+
+langBtn.addEventListener('click', toggleLangMenu);
+
+
+// --- Event Listeners ---
+function setupEventListeners() {
+    // Theme
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    // Drag & Drop
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        handleFiles(e.dataTransfer.files);
+    });
+
+    // File Input
+    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+    // Global Controls
+    qualityInput.addEventListener('input', (e) => {
+        qualityVal.textContent = e.target.value + '%';
+        state.globalOptions.quality = parseInt(e.target.value) / 100;
+    });
+
+    formatSelect.addEventListener('change', (e) => state.globalOptions.format = e.target.value);
+    
+    widthInput.addEventListener('input', (e) => state.globalOptions.maxWidth = parseInt(e.target.value) || 0);
+    
+    ratioCheck.addEventListener('change', (e) => state.globalOptions.maintainRatio = e.target.checked);
+
+    applyBtn.addEventListener('click', recompressAll);
+    
+    // Bottom Bar
+    document.getElementById('reset-all').addEventListener('click', clearAll);
+    document.getElementById('download-all').addEventListener('click', downloadAll);
+}
+
+function updateTexts() {
+    const t = translations[state.lang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) el.textContent = t[key];
+    });
+}
+
+// --- Core Logic ---
+
+async function handleFiles(fileList) {
+    if (!fileList.length) return;
+
+    controlsSection.classList.remove('hidden');
+    bottomBar.classList.add('visible');
+
+    const newFiles = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+    
+    for (const file of newFiles) {
+        const id = 'img_' + Math.random().toString(36).substr(2, 9);
+        const fileObj = {
+            id,
+            file,
+            originalUrl: URL.createObjectURL(file),
+            compressedBlob: null,
+            options: { ...state.globalOptions },
+            status: 'pending' // pending, processing, done, error
+        };
+        
+        state.files.push(fileObj);
+        renderCard(fileObj);
+        
+        // Process immediately
+        await processImage(fileObj);
+    }
+    updateGlobalStats();
+}
+
+/**
+ * Renders the image card initially.
+ * Updates happen via updateCardUI()
+ */
+function renderCard(fileObj) {
+    const t = translations[state.lang];
+    const div = document.createElement('div');
+    div.className = 'img-card';
+    div.id = fileObj.id;
+    
+    div.innerHTML = `
+        <div class="img-preview-area">
+            <span class="img-badge-format">${fileObj.file.type.split('/')[1].toUpperCase()}</span>
+            <button class="remove-btn" onclick="removeImage('${fileObj.id}')">&times;</button>
+            <img src="${fileObj.originalUrl}" alt="Preview">
+        </div>
+        <div class="img-details">
+            <div class="filename" title="${fileObj.file.name}">${fileObj.file.name}</div>
+            
+            <div class="stats-row">
+                <span>${t.original}</span>
+                <span class="stats-val">${formatBytes(fileObj.file.size)}</span>
+            </div>
+            
+            <div class="compression-bar">
+                <div class="compression-fill" id="fill-${fileObj.id}"></div>
+            </div>
+            
+            <div class="stats-row">
+                <span>${t.compressed}</span>
+                <span class="stats-val" id="size-${fileObj.id}">...</span>
+            </div>
+            
+            <div class="flex justify-between items-center" style="margin-top:4px;">
+                <span class="badge badge-success" id="badge-${fileObj.id}">0%</span>
+            </div>
+        </div>
+        <div class="card-actions">
+            <button class="btn-card" onclick="triggerDownload('${fileObj.id}')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Save
+            </button>
+        </div>
+    `;
+    
+    imageGrid.appendChild(div);
+}
+
+async function processImage(fileObj) {
+    const card = document.getElementById(fileObj.id);
+    if (!card) return;
+
+    // Show loading state if needed
+    const statusText = card.querySelector(`#size-${fileObj.id}`);
+    statusText.innerHTML = '<div class="spinner"></div>';
+
+    try {
+        const img = new Image();
+        img.src = fileObj.originalUrl;
+        
+        await new Promise(r => img.onload = r);
+
+        // Determine output dimensions
+        let width = img.width;
+        let height = img.height;
+        const maxW = fileObj.options.maxWidth > 0 ? fileObj.options.maxWidth : 0;
+
+        if (maxW > 0 && width > maxW) {
+            if (fileObj.options.maintainRatio) {
+                height = Math.round(height * (maxW / width));
+                width = maxW;
+            } else {
+                width = maxW;
+            }
+        }
+
+        // Determine Format
+        let outputFormat = fileObj.options.format;
+        if (outputFormat === 'original') {
+            outputFormat = fileObj.file.type;
+        }
+
+        // Canvas Compression
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        
+        // Png transparency handling
+        if (!outputFormat.includes('png') && !outputFormat.includes('webp')) {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, width, height);
+        }
+        
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convert to Blob
+        canvas.toBlob((blob) => {
+            fileObj.compressedBlob = blob;
+            fileObj.status = 'done';
+            updateCardUI(fileObj);
+            updateGlobalStats();
+        }, outputFormat, fileObj.options.quality);
+
+    } catch (err) {
+        console.error("Compression Failed", err);
+        fileObj.status = 'error';
+    }
+}
+
+function updateCardUI(fileObj) {
+    if (fileObj.status !== 'done') return;
+
+    const sizeEl = document.getElementById(`size-${fileObj.id}`);
+    const badgeEl = document.getElementById(`badge-${fileObj.id}`);
+    const fillEl = document.getElementById(`fill-${fileObj.id}`);
+
+    const origSize = fileObj.file.size;
+    const newSize = fileObj.compressedBlob.size;
+    const saving = Math.max(0, origSize - newSize);
+    const percent = ((saving / origSize) * 100).toFixed(1);
+
+    sizeEl.textContent = formatBytes(newSize);
+    badgeEl.textContent = `-${percent}%`;
+    fillEl.style.width = `${percent}%`;
+
+    // Visual color shift based on efficiency
+    if (saving < 0) {
+        badgeEl.className = 'badge badge-danger';
+        badgeEl.textContent = 'Larger';
+        fillEl.style.backgroundColor = 'var(--danger)';
+    } else {
+        badgeEl.className = 'badge badge-success';
+        fillEl.style.backgroundColor = 'var(--success)';
+    }
+}
+
+async function recompressAll() {
+    // Update options for all active files based on global inputs
+    state.files.forEach(f => {
+        f.options = { ...state.globalOptions };
+    });
+
+    // Animate button
+    const btnText = applyBtn.querySelector('span');
+    const oldText = btnText.textContent;
+    btnText.textContent = 'Processing...';
+    
+    // Process sequentially to avoid browser freeze
+    for (const f of state.files) {
+        await processImage(f);
+    }
+    
+    btnText.textContent = oldText;
+}
+
+function removeImage(id) {
+    const idx = state.files.findIndex(f => f.id === id);
+    if (idx > -1) {
+        // Cleanup memory
+        URL.revokeObjectURL(state.files[idx].originalUrl);
+        state.files.splice(idx, 1);
+        document.getElementById(id).remove();
+        updateGlobalStats();
+        
+        if (state.files.length === 0) {
+            controlsSection.classList.add('hidden');
+            bottomBar.classList.remove('visible');
+        }
+    }
+}
+
+function clearAll() {
+    state.files.forEach(f => URL.revokeObjectURL(f.originalUrl));
+    state.files = [];
+    imageGrid.innerHTML = '';
+    controlsSection.classList.add('hidden');
+    bottomBar.classList.remove('visible');
+    updateGlobalStats();
+}
+
+function updateGlobalStats() {
+    let totalOrig = 0;
+    let totalComp = 0;
+    let count = 0;
+
+    state.files.forEach(f => {
+        if (f.status === 'done') {
+            totalOrig += f.file.size;
+            totalComp += f.compressedBlob.size;
+            count++;
+        }
+    });
+
+    const saved = Math.max(0, totalOrig - totalComp);
+    document.getElementById('total-savings').textContent = formatBytes(saved);
+    document.getElementById('file-count').textContent = count;
+}
+
+// --- Download Logic ---
+
+function triggerDownload(id) {
+    const f = state.files.find(file => file.id === id);
+    if (!f || f.status !== 'done') return;
+
+    downloadBlob(f.compressedBlob, generateFilename(f));
+}
+
+function downloadAll() {
+    // Vanilla JS "Download All" usually iterates. 
+    // Creating a ZIP client-side requires a heavy library (JSZip) which we want to avoid for pure vanilla speed.
+    // We will loop with delays to ensure browser allows multiple downloads.
+    
+    let delay = 0;
+    state.files.forEach(f => {
+        if (f.status === 'done') {
+            setTimeout(() => {
+                downloadBlob(f.compressedBlob, generateFilename(f));
+            }, delay);
+            delay += 300; // Stagger downloads
+        }
+    });
+}
+
+function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+}
+
+function generateFilename(fileObj) {
+    const originalName = fileObj.file.name;
+    const dotIndex = originalName.lastIndexOf('.');
+    const name = dotIndex !== -1 ? originalName.substring(0, dotIndex) : originalName;
+    
+    // Determine extension
+    let ext = 'jpg';
+    const type = fileObj.compressedBlob.type;
+    if (type === 'image/png') ext = 'png';
+    if (type === 'image/webp') ext = 'webp';
+    if (type === 'image/jpeg') ext = 'jpg';
+
+    return `${name}-optipress.${ext}`;
+}
+
+// --- Utilities ---
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+</script>
+</body>
+</html>
